@@ -1,28 +1,26 @@
-let cvs
 let myShader
+let perceptron
+let visualizer
 
 function preload() {
   myShader = loadShader('shaders/vert.glsl', 'shaders/frag.glsl')
 }
 
 function setup() {
-  cvs = createCanvas(windowWidth, windowHeight, WEBGL)
+  let cvs = createCanvas(CANVAS_DIMENSION, CANVAS_DIMENSION, WEBGL)
   cvs.parent('my-cvs')
+
+  perceptron = new Perceptron(samples, targets, 0.1, 0.01, 2000)
+  visualizer = new Visualizer(perceptron, myShader)
 }
 
 function draw() {
-  shader(myShader)
-
-  let mx = map(mouseX, 0, width, 0, 1)
-  let my = map(mouseY, 0, height, 0, 1)
-
-  myShader.setUniform('u_mouse', [mx, my])
-  myShader.setUniform('u_resolution', [windowWidth, windowHeight])
-  myShader.setUniform('u_time', performance.now())
-
-  rect(0, 0, width, height)
+  // perceptron.step()
+  visualizer.draw()
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight)
+  resizeCanvas(CANVAS_DIMENSION, CANVAS_DIMENSION)
 }
+
+setInterval(() => perceptron.step(), 1000)
